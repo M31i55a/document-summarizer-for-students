@@ -48,6 +48,9 @@ Pull the required models:
 
 ```
 ollama pull llama3.2
+```
+
+```
 ollama pull nomic-embed-text
 ```
 
@@ -57,7 +60,13 @@ Clone the repository and install dependencies:
 
 ```
 git clone https://github.com/M31i55a/document-summarizer-for-students.git
+```
+
+```
 cd ai-doc-intelligence
+```
+
+```
 pip install -r requirements.txt
 ```
 
