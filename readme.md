@@ -48,7 +48,7 @@ Clone the repository and install the dependencies:
 
 Bash
 
-git clone https://github.com/your-username/ai-doc-intelligence.git
+git clone https://github.com/M31i55a/document-summarizer-for-students.git
 cd ai-doc-intelligence
 pip install -r requirements.txt
 Note: Ensure you have fastapi, uvicorn, langchain, langchain-ollama, chromadb, and unstructured installed.
