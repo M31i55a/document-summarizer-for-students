@@ -9,7 +9,7 @@
 pip install -r requirements.txt
 
 # Verify installation
-pip list | findstr langchain flask chromadb
+pip list | findstr langchain chromadb
 ```
 
 ### Running the Application
@@ -25,7 +25,7 @@ ollama serve
 
 ```bash
 cd c:\Users\DELL\Desktop\llm
-python app.py
+python server.py
 # Output: Server running on http://localhost:5000
 ```
 

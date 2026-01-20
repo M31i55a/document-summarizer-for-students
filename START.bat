@@ -46,7 +46,7 @@ echo ✅ Ollama is installed
 REM Check if required models are available
 echo.
 echo 🔍 Checking for required models...
-ollama list | findstr "llama3.2" >nul
+ollama list | findstr "llama3.2:latest" >nul
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo 📥 Pulling llama3.2 model (first time only, ~4GB)...

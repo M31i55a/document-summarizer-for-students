@@ -59,7 +59,7 @@ ollama serve
 ### 4. Run the Application
 
 ```bash
-python app.py
+python server.py
 ```
 
 The server will start at **http://localhost:5000**
