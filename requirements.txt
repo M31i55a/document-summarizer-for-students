@@ -11,3 +11,6 @@ fastembed
 pikepdf
 sentence-transformers
 elevenlabs
+flask
+flask-cors
+python-docx

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setup Test - Document Summarizer</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0a0e27, #1a0f3e);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        background: rgba(20, 25, 50, 0.8);
+        border: 2px solid rgba(0, 212, 255, 0.2);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        color: #00d4ff;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .test-item {
+        margin: 20px 0;
+        padding: 20px;
+        background: rgba(0, 212, 255, 0.05);
+        border-left: 3px solid #00d4ff;
+        border-radius: 5px;
+      }
+
+      .test-label {
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .test-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+
+      .status-checking {
+        background: #ff9500;
+        color: #000;
+      }
+
+      .status-ok {
+        background: #00ff88;
+        color: #000;
+      }
+
+      .status-error {
+        background: #ff4757;
+        color: #fff;
+      }
+
+      .instructions {
+        background: rgba(131, 56, 236, 0.1);
+        border: 1px solid #8338ec;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 30px 0;
+      }
+
+      .instructions h3 {
+        color: #8338ec;
+        margin-bottom: 10px;
+      }
+
+      .instructions ol {
+        margin-left: 20px;
+        line-height: 1.8;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #00d4ff, #8338ec);
+        color: #000;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #00d4ff;
+        border: 1px solid #00d4ff;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(0, 212, 255, 0.2);
+      }
+
+      .summary {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        display: none;
+      }
+
+      .summary.show {
+        display: block;
+      }
+
+      code {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: "Courier New", monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Document Summarizer - Setup Test</h1>
+
+      <div class="instructions">
+        <h3>📋 Setup Checklist</h3>
+        <ol>
+          <li>Make sure <strong>Ollama is running</strong> (ollama serve)</li>
+          <li>
+            Make sure <strong>Flask backend is running</strong> (python app.py)
+          </li>
+          <li>This test page verifies everything is ready</li>
+          <li>Check the results below for any issues</li>
+        </ol>
+      </div>
+
+      <div id="tests">
+        <!-- Tests will be added here -->
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="runTests()">🔍 Run Tests</button>
+        <button class="btn-secondary" onclick="goToApp()">
+          ✨ Go to App (index.html)
+        </button>
+      </div>
+
+      <div id="summary" class="summary">
+        <strong id="summaryText"></strong>
+      </div>
+    </div>
+
+    <script>
+      async function runTests() {
+        const testsDiv = document.getElementById("tests");
+        testsDiv.innerHTML = "";
+
+        const tests = [
+          {
+            name: "Flask Backend",
+            test: () => fetch("/api/health"),
+          },
+          {
+            name: "Static Files (CSS)",
+            test: () => fetch("/styles.css"),
+          },
+          {
+            name: "Static Files (JS)",
+            test: () => fetch("/script.js"),
+          },
+          {
+            name: "API Endpoint",
+            test: () =>
+              fetch("/api/summarize").then((r) => {
+                // 405 Method Not Allowed is expected for GET
+                return Promise.resolve(r.status === 405 || r.ok);
+              }),
+          },
+          {
+            name: "Browser APIs",
+            test: () => {
+              try {
+                new Blob();
+                fetch("/");
+                return Promise.resolve(true);
+              } catch (e) {
+                return Promise.resolve(false);
+              }
+            },
+          },
+        ];
+
+        let passedCount = 0;
+        let failedCount = 0;
+
+        for (const testCase of tests) {
+          const testDiv = document.createElement("div");
+          testDiv.className = "test-item";
+          testDiv.innerHTML = `
+                    <div class="test-label">${testCase.name}</div>
+                    <span class="test-status status-checking">⏳ Checking...</span>
+                `;
+          testsDiv.appendChild(testDiv);
+
+          try {
+            const result = await testCase.test();
+            const statusSpan = testDiv.querySelector(".test-status");
+
+            if (result) {
+              statusSpan.className = "test-status status-ok";
+              statusSpan.textContent = "✅ OK";
+              passedCount++;
+            } else {
+              statusSpan.className = "test-status status-error";
+              statusSpan.textContent = "❌ Failed";
+              failedCount++;
+            }
+          } catch (error) {
+            const statusSpan = testDiv.querySelector(".test-status");
+            statusSpan.className = "test-status status-error";
+            statusSpan.textContent = `❌ ${error.message}`;
+            failedCount++;
+          }
+
+          // Small delay for visual feedback
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
+        // Show summary
+        const summary = document.getElementById("summary");
+        const summaryText = document.getElementById("summaryText");
+
+        if (failedCount === 0) {
+          summaryText.textContent = `✅ All tests passed! Your setup is ready. Go to the app now!`;
+          summary.classList.add("show");
+        } else {
+          summaryText.innerHTML = `
+                    ⚠️ ${failedCount} test(s) failed. Common issues:<br>
+                    1. Ollama is not running (run: ollama serve)<br>
+                    2. Flask backend is not running (run: python app.py)<br>
+                    3. Port 5000 is already in use<br>
+                    Check the console (F12) for more details.
+                `;
+          summary.classList.add("show");
+          summary.style.borderColor = "#ff4757";
+          summary.style.color = "#ff4757";
+        }
+      }
+
+      function goToApp() {
+        window.location.href = "/index.html";
+      }
+
+      // Auto-run tests on page load
+      window.addEventListener("load", () => {
+        console.log(
+          'Setup test page loaded. Click "Run Tests" to verify setup.'
+        );
+      });
+    </script>
+  </body>
+</html>

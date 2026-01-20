@@ -1,130 +1,191 @@
-# 📄 AI Document Intelligence (RAG)
+# 📄 Document Summarizer - AI Powered
 
-A futuristic, full-stack RAG (Retrieval-Augmented Generation) application that transforms dense PDF documents into structured study guides. Upload a document, and let the local AI generate summaries, key topics, and exam-style questions — all presented in a sleek, glassmorphic interface.
+A beautiful, futuristic web interface for summarizing documents using RAG (Retrieval Augmented Generation) and LLMs. Upload a document and get an instant, structured summary with download options.
 
 ## ✨ Features
 
-Smart Summarization: Automatically generates beginner-friendly summaries in French.
+🎨 **Beautiful UI** - Modern, responsive design with smooth animations and glassmorphic effects
 
-Knowledge Extraction: Breaks down complex topics into clear explanations and bullet points.
+📄 **Multiple Formats** - Upload PDF, TXT, or DOCX files
 
-Exam Preparation: Generates 10–15 teacher-style questions and answers based only on the provided text.
+📋 **Structured Summaries** - Get professionally formatted summaries with:
 
-Futuristic UI: High-end, responsive Cyberpunk-Glassmorphism design.
+- Title
+- 3-5 key bullet points
+- One-sentence key takeaway
 
-Multi-Format Export: Download your generated study guide as .txt or .doc.
+💾 **Download Options** - Export summaries as .TXT or .DOCX
 
-Privacy First: Runs locally using Ollama — your documents never leave your machine.
+🚀 **Fast Processing** - Real-time document analysis with visual progress
+
+🔒 **Privacy First** - All processing done locally using Ollama — your documents never leave your machine
 
 ## 🛠️ Tech Stack
 
-### Backend
+- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
+- **Backend**: Flask, Python
+- **RAG/LLM**: LangChain, Ollama, ChromaDB
+- **Document Processing**: Unstructured, pdfplumber
+- **Export**: python-docx (for .DOCX generation)
 
-LangChain: RAG orchestration and document processing
-
-FastAPI: High-performance Python web framework for the API
-
-ChromaDB: Vector database for local document storage
-
-Ollama: Powers Llama 3.2 (LLM) and nomic-embed-text (Embeddings)
-
-### Frontend
-
-HTML5/CSS3: Modern Glassmorphism design with CSS variables and animations
-
-JavaScript (Vanilla): Asynchronous API handling and dynamic DOM updates
-
-Marked.js: Renders AI-generated Markdown into beautiful HTML
-
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### 1. Prerequisites
 
-Python 3.9+
+- Python 3.9+
+- Ollama installed and running
 
-Ollama installed
+### 2. Install Dependencies
 
-Pull the required models:
-
-```
-ollama pull llama3.2
-```
-
-```
-ollama pull nomic-embed-text
-```
-
-### 2. Installation
-
-Clone the repository and install dependencies:
-
-```
-git clone https://github.com/M31i55a/document-summarizer-for-students.git
-```
-
-```
-cd ai-doc-intelligence
-```
-
-```
+```bash
 pip install -r requirements.txt
 ```
 
-Note: Ensure fastapi, uvicorn, langchain, langchain-ollama, chromadb, and unstructured are installed.
+### 3. Make sure Ollama is running
 
-### 3. Running the Application
+Pull the required models:
 
-Start the Backend:
-
+```bash
+ollama pull llama3.2
+ollama pull nomic-embed-text
 ```
+
+Start Ollama server:
+
+```bash
+ollama serve
+```
+
+### 4. Run the Application
+
+```bash
 python app.py
 ```
 
-```
-The server will start at http://localhost:8000.
-```
+The server will start at **http://localhost:5000**
 
-Open the Frontend: Simply open index.html in your favorite web browser.
+### 5. Open in Browser
+
+Navigate to `http://localhost:5000` and start summarizing documents!
 
 ## 📂 Project Structure
 
 ```
-ai-doc-intelligence/
-├── app.py # FastAPI Backend & RAG Logic
-├── index.html # Futuristic Frontend
-├── style.css # Glassmorphism Styling
-├── script.js # Frontend Logic & API Integration
-├── data/ # Directory for uploaded PDFs and vector store
-└── README.md # Project Documentation
+.
+├── index.html          # Main web interface
+├── styles.css          # Beautiful futuristic styling
+├── script.js           # Frontend JavaScript logic
+├── app.py              # Flask backend API server
+├── start1.py           # Original RAG pipeline (optional)
+├── requirements.txt    # Python dependencies
+├── README.md           # This file
+└── data/               # Data directory
+    └── BOI.pdf         # Sample PDF (if available)
 ```
 
-## 📝 How it Works
+## 📋 How it Works
 
-### Ingestion:
+1. **Document Upload** - User uploads PDF, TXT, or DOCX file
+2. **Document Processing** - Backend loads and chunks the document
+3. **Vector Embedding** - Chunks are converted to embeddings using nomic-embed-text
+4. **Vector Storage** - Embeddings stored in ChromaDB
+5. **Retrieval** - MMR (Maximal Marginal Relevance) retrieves relevant chunks
+6. **Summarization** - Llama 3.2 generates structured summary using RAG
+7. **Display** - Beautiful formatted results shown in browser
+8. **Export** - User can download as .TXT or .DOCX
 
-The PDF is loaded via UnstructuredPDFLoader and split into chunks of 1200 characters with a 300-character overlap.
+## 🎨 Output Format
 
-### Vectorization:
+The AI generates structured summaries with:
 
-Chunks are converted into embeddings using nomic-embed-text and stored in a local Chroma database.
+```
+Title: [One short line]
 
-### Retrieval:
+Summary:
+- [Bullet point 1]
+- [Bullet point 2]
+- [Bullet point 3]
+- [Bullet point 4]
+- [Bullet point 5]
 
-When a summary is requested, the system uses MMR (Maximal Marginal Relevance) to find the most relevant and diverse parts of the document.
+Key takeaway: [One simple sentence]
+```
 
-### Generation:
+## 🔌 API Endpoints
 
-The Llama 3.2 model processes the context and follows a strict prompt template to generate a structured study guide in French.
+### GET `/`
 
-## 🤝 Contributing
+Serves the HTML interface
 
-Contributions are welcome! Feel free to open an issue or submit a pull request for new features such as:
+### GET `/api/health`
 
-Multi-language support
+Health check
 
-Dark/light mode toggle
+```json
+{ "status": "ok" }
+```
 
-Additional export formats
+### POST `/api/summarize`
+
+Summarize a document
+
+- **Request**: Multipart form-data with `file` field
+- **Response**:
+
+```json
+{
+  "summary": "...",
+  "filename": "document.pdf",
+  "status": "success"
+}
+```
+
+## ⚙️ Configuration
+
+Edit `app.py` to customize:
+
+- `MODEL` - Change LLM model (default: llama3.2)
+- `EMBEDDING_MODEL` - Change embedding model
+- `CHUNK_SIZE` - Document chunk size (default: 1200)
+- `CHUNK_OVERLAP` - Chunk overlap percentage
+- `RETRIEVAL_K` - Number of chunks to retrieve
+
+## 🐛 Troubleshooting
+
+**"Connection refused" error**
+
+- Make sure Ollama is running: `ollama serve`
+- Check Flask server is running on port 5000
+
+**"Model not found" error**
+
+- Pull models: `ollama pull llama3.2` and `ollama pull nomic-embed-text`
+
+**"Out of memory" error**
+
+- Reduce `CHUNK_SIZE` in app.py
+- Process smaller documents
+- Close other applications
+
+**Browser shows blank page**
+
+- Check console (F12) for errors
+- Verify Flask server is running
+- Clear browser cache (Ctrl+Shift+Delete)
+
+## 🌐 Browser Support
+
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers (responsive design)
+
+## 💡 Tips
+
+- First run takes longer (model initialization)
+- Large documents (>50 pages) may take 2-5 minutes
+- All processing is local - no internet required
+- Documents are processed in memory and not saved
 
 ## 📄 License
 
