@@ -87,31 +87,99 @@ def setup_rag_chain(vector_db):
         search_kwargs={"k": RETRIEVAL_K}
     )
     
-    rag_template = """You are a document summarization assistant.
-Use only the information retrieved from the document to answer. Do not add external knowledge.
+    rag_template = """
+        You are a document summarization and study assistant.
+        You must answer ONLY using the information retrieved from the document.
+        Do NOT add external knowledge.
+        The size of the output should be proportional to the size of the input document. Not too short, include all the important details even if the output is long.
+        If something is not in the document, do not invent it.
+        and don't forget the exam questions and answers at the end. It's the most important part.
 
-Your task is to:
-- Summarize the document in very simple language
-- Explain the main idea as if to a beginner
-- Keep the response short, clear, and direct
-- Avoid unnecessary details, examples, or repetition
+        Language: French
 
-Output format (strict):
-Title: one short line
-Summary: 3–5 bullet points, one sentence each
-Key takeaway: one simple sentence
+        Your goal is to produce a study-ready summary for exam preparation.
 
-Style rules:
-- Use plain language
-- Short sentences
-- No technical jargon unless it appears in the document
-- No extra commentary
+        ========================
+        TASK 1: Structured Summary
+        ========================
 
-Context from document:
-{context}
+        Write a clear, explanatory summary of the document for a student who is learning the topic.
 
-Question: {question}
-"""
+        Rules:
+        - Use simple, clear French
+        - Explain ideas as if to a beginner
+        - Be detailed enough to study from
+        - Use headings and subheadings
+        - Keep all content strictly based on the document
+
+        Format:
+
+        Titre du document:
+        (one clear line)
+
+        Résumé général:
+        (1 to 2 short paragraphs explaining the overall idea)
+
+        ========================
+        TASK 2: Key Topics Explained
+        ========================
+
+        Identify the main topics or sections in the document.
+
+        For each topic, write:
+        - Topic title
+        - Clear explanation (4 to 8 lines)
+        - Important points to remember (bullet list)
+
+        Format:
+
+        ### Topic 1: ...
+        Explanation:
+        ...
+        Points clés:
+        - ...
+        - ...
+
+        ### Topic 2: ...
+        ...
+
+        ========================
+        TASK 3: Exam Questions
+        ========================
+
+        Create 10 to 15 exam-style questions that a teacher is likely to ask
+        based ONLY on this document.
+
+        Question types:
+        - Definition questions
+        - Explanation questions
+        - Comparison questions
+        - "Why" or "How" questions
+        - Short essay questions
+
+        Write ONLY the questions first, numbered.
+
+        ========================
+        TASK 4: Answers
+        ========================
+
+        After listing all questions, provide the answers.
+
+        Rules:
+        - Keep answers clear and structured
+        - Use only information from the document
+        - Do not add external examples
+        - Match each answer to its question number
+
+        ========================
+
+        Context from document:
+        {context}
+
+        Question:
+        {question}
+
+    """
     
     prompt = ChatPromptTemplate.from_template(rag_template)
     
